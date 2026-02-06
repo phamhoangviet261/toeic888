@@ -1,52 +1,65 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  setPersistence,
-  browserLocalPersistence,
-} from "firebase/auth";
-import { auth, googleProvider } from "../../lib/firebase";
+import { setAuthenticated } from "../../lib/authSlice";
+import { useAppDispatch } from "../../lib/hooks";
+import { useFirebaseLoginMutation } from "../../lib/queries/firebase";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const loginMutation = useFirebaseLoginMutation();
 
-  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+  const handleLogin = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    setLoading(true);
 
-    try {
-      await setPersistence(auth, browserLocalPersistence);
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Đăng nhập thất bại. Vui lòng thử lại.";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
+    loginMutation.mutate(
+      { email, password },
+      {
+        onSuccess: (user) => {
+          dispatch(
+            setAuthenticated({
+              userId: user.uid,
+              email: user.email,
+            })
+          );
+        },
+        onError: (err) => {
+          const message =
+            err instanceof Error ? err.message : "Đăng nhập thất bại. Vui lòng thử lại.";
+          setError(message);
+        },
+      }
+    );
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setError(null);
-    setLoading(true);
 
-    try {
-      await setPersistence(auth, browserLocalPersistence);
-      await signInWithPopup(auth, googleProvider);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Không thể đăng nhập với Google.";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
+    loginMutation.mutate(
+      { provider: "google" },
+      {
+        onSuccess: (user) => {
+          dispatch(
+            setAuthenticated({
+              userId: user.uid,
+              email: user.email,
+            })
+          );
+        },
+        onError: (err) => {
+          const message =
+            err instanceof Error ? err.message : "Không thể đăng nhập với Google.";
+          setError(message);
+        },
+      }
+    );
   };
+
+  const loading = loginMutation.isPending;
 
   return (
     <div className="flex w-full flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">

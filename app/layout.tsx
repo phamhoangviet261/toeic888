@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Toeic888 - AI luyện TOEIC/IELTS",
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className="min-h-screen bg-white text-ink">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
