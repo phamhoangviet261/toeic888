@@ -1,6 +1,23 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { onAuthStateChanged, type User } from "firebase/auth";
+import { auth } from "../../lib/firebase";
 
 export default function Header() {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      setUser(nextUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const userLabel = user?.displayName?.trim() || user?.email || "Tài khoản";
+
   return (
     <header className="border-b border-slate-200 bg-white">
       <div className="container-page flex items-center justify-between py-4">
@@ -15,7 +32,7 @@ export default function Header() {
             IELTS
           </Link>
           <Link href="/account" className="hover:text-ink">
-            Tài khoản
+            {user ? `Xin chào, ${userLabel}` : "Tài khoản"}
           </Link>
         </nav>
       </div>
