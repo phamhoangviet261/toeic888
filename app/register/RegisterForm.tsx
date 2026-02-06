@@ -1,57 +1,66 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  setPersistence,
-  browserLocalPersistence,
-  updateProfile,
-} from "firebase/auth";
-import { auth, googleProvider } from "../../lib/firebase";
+import { setAuthenticated } from "../../lib/authSlice";
+import { useAppDispatch } from "../../lib/hooks";
+import { useFirebaseRegisterMutation } from "../../lib/queries/firebase";
 
 export default function RegisterForm() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const registerMutation = useFirebaseRegisterMutation();
 
-  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
+  const handleRegister = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    setLoading(true);
 
-    try {
-      await setPersistence(auth, browserLocalPersistence);
-      const credential = await createUserWithEmailAndPassword(auth, email, password);
-      if (fullName.trim()) {
-        await updateProfile(credential.user, { displayName: fullName.trim() });
+    registerMutation.mutate(
+      { email, password, fullName },
+      {
+        onSuccess: (user) => {
+          dispatch(
+            setAuthenticated({
+              userId: user.uid,
+              email: user.email,
+            })
+          );
+        },
+        onError: (err) => {
+          const message =
+            err instanceof Error ? err.message : "Đăng ký thất bại. Vui lòng thử lại.";
+          setError(message);
+        },
       }
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Đăng ký thất bại. Vui lòng thử lại.";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
+    );
   };
 
-  const handleGoogleRegister = async () => {
+  const handleGoogleRegister = () => {
     setError(null);
-    setLoading(true);
 
-    try {
-      await setPersistence(auth, browserLocalPersistence);
-      await signInWithPopup(auth, googleProvider);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Không thể đăng ký với Google.";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
+    registerMutation.mutate(
+      { provider: "google" },
+      {
+        onSuccess: (user) => {
+          dispatch(
+            setAuthenticated({
+              userId: user.uid,
+              email: user.email,
+            })
+          );
+        },
+        onError: (err) => {
+          const message =
+            err instanceof Error ? err.message : "Không thể đăng ký với Google.";
+          setError(message);
+        },
+      }
+    );
   };
+
+  const loading = registerMutation.isPending;
 
   return (
     <div className="flex w-full flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
