@@ -1,3 +1,5 @@
+import { Button, Footer, Header } from "../components/ui";
+
 const skills = [
   {
     name: "Listening",
@@ -53,33 +55,7 @@ const roadmap = [
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
-      <header className="border-b border-slate-200 bg-white/80 backdrop-blur">
-        <div className="container-page flex items-center justify-between py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink text-white">
-              T8
-            </div>
-            <div>
-              <p className="text-lg font-semibold">Toeic888</p>
-              <p className="text-xs text-slate-500">AI luyện TOEIC/IELTS</p>
-            </div>
-          </div>
-          <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex">
-            <a className="hover:text-ink" href="#skills">
-              Kỹ năng
-            </a>
-            <a className="hover:text-ink" href="#features">
-              Tính năng
-            </a>
-            <a className="hover:text-ink" href="#roadmap">
-              Lộ trình
-            </a>
-          </nav>
-          <button className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-white shadow-sm">
-            Dùng thử miễn phí
-          </button>
-        </div>
-      </header>
+      <Header />
 
       <main>
         <section className="bg-gradient-to-b from-soft via-white to-white py-16">
@@ -97,12 +73,12 @@ export default function HomePage() {
                 tức thì và lộ trình học cá nhân hóa.
               </p>
               <div className="flex flex-wrap gap-3">
-                <button className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-200">
+                <Button className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-200">
                   Bắt đầu luyện tập
-                </button>
-                <button className="rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-ink">
+                </Button>
+                <Button className="rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-ink">
                   Xem demo lớp học
-                </button>
+                </Button>
               </div>
               <div className="flex flex-wrap gap-6 text-sm text-slate-500">
                 <div>
@@ -150,9 +126,9 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <button className="w-full rounded-xl bg-ink px-4 py-3 text-sm font-semibold text-white">
+                <Button className="w-full rounded-xl bg-ink px-4 py-3 text-sm font-semibold text-white">
                   Vào phòng luyện ngay
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -177,9 +153,9 @@ export default function HomePage() {
                 >
                   <p className="text-lg font-semibold text-ink">{skill.name}</p>
                   <p className="mt-2 text-sm text-slate-600">{skill.description}</p>
-                  <button className="mt-6 text-sm font-semibold text-accent">
+                  <Button className="mt-6 text-sm font-semibold text-accent">
                     Xem bài luyện →
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -199,9 +175,9 @@ export default function HomePage() {
                 Tập trung vào lỗi thường gặp, nhận feedback ngay khi hoàn thành bài và theo dõi
                 tiến bộ theo tuần.
               </p>
-              <button className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white">
+              <Button className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white">
                 Khám phá thư viện đề
-              </button>
+              </Button>
             </div>
             <div className="grid gap-4">
               {features.map((feature) => (
@@ -243,22 +219,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="container-page flex flex-col gap-4 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2024 Toeic888. All rights reserved.</p>
-          <div className="flex gap-4">
-            <a className="hover:text-ink" href="#">
-              Điều khoản
-            </a>
-            <a className="hover:text-ink" href="#">
-              Chính sách bảo mật
-            </a>
-            <a className="hover:text-ink" href="#">
-              Liên hệ
-            </a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
